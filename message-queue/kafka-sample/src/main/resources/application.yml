@@ -2,14 +2,38 @@ server:
     port: 8080
 
 spring:
+    application:
+        name: kafka-sample
     kafka:
+        bootstrap-servers: 101.35.254.46:9091,101.35.254.46:9092
+        producer:
+            retries: 3 # 默认Integer.MAX
+            batch-size: 16384 # 默认16384，即16kb
+            buffer-memory: 33554432 # 默认33554432，即32mb
+            acks: 1 # 默认1，即leader确认收到便通知客户端成功
+            compression-type: none # 默认none
+            key-serializer: org.apache.kafka.common.serialization.StringSerializer # 没有默认值
+            value-serializer: org.apache.kafka.common.serialization.StringSerializer # 没有默认值
+            properties:
+                retry:
+                    backoff:
+                        ms: 1000 # 默认100
+                request:
+                    timeout:
+                        ms: 20000 # 默认30000
+                deliverty:
+                    timeout:
+                        ms: 60000 # 默认120000 (delivery = request * retry)
         consumer:
-            bootstrap-servers: 101.35.254.46:9092,101.35.254.46:9093,101.35.254.46:9094
-            group-id: kafka-sample
+            group-id: ${spring.application.name}
             auto-offset-reset: earliest
+            enable-auto-commit: false # 打开手动提交(1), 默认自动
             key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
             value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-        producer:
-            bootstrap-servers: 101.35.254.46:9092,101.35.254.46:9093,101.35.254.46:9094
-            key-serializer: org.apache.kafka.common.serialization.StringSerializer
-            value-serializer: org.apache.kafka.common.serialization.StringSerializer
+        listener:
+            ack-mode: manual_immediate # 打开手动提交(2), 默认自动提交
+
+logging:
+    root: info
+    pattern:
+        console: "%-12(%d{yyyy-MM-dd HH:mm:ss.SSS}) |-%-5level [%thread] %c [%L] -| %msg%n"
