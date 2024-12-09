@@ -12,11 +12,11 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class KafkaConsumer {
+public class DefaultConsumer {
 
-    @KafkaListener(topics = "curr3", groupId = "group3")
-    public void curr3Listener(ConsumerRecord<String, String> record) {
-        log.info("curr3Listener record: {}", record);
+    @KafkaListener(topics = "test1", groupId = "group1")
+    public void test1Listener(ConsumerRecord<String, String> record) {
+        log.info("test1Listener record: {}", record);
     }
 
 }

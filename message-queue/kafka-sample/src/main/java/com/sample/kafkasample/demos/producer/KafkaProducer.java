@@ -25,9 +25,10 @@ public class KafkaProducer {
         kafkaTemplate.send(topic, partition, key, message)
                 .addCallback(
                         result -> log.info("send success, result: {}", result),
-                        e -> log.error("send failed", e));
+                        e -> log.error("send failed, topic: {}, partition: {}, key: {}, message: {}",
+                                topic, partition, key, message, e));
         log.info("after async send");
-        Thread.sleep(5_000);
+        Thread.sleep(3_000);
         log.info("send async finish");
     }
 
@@ -41,6 +42,12 @@ public class KafkaProducer {
             log.error("send sync failed", e);
         }
         log.info("send sync finish");
+    }
+
+    public void sendBatch() {
+        for (int i = 0; i < 20; ++i) {
+            kafkaTemplate.send("test1", 0, "testKey", "data" + i);
+        }
     }
 
 }

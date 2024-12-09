@@ -5,7 +5,7 @@ spring:
     application:
         name: kafka-sample
     kafka:
-        bootstrap-servers: 101.35.254.46:9091,101.35.254.46:9092
+        bootstrap-servers: 124.223.93.211:9091,124.223.93.211:9092
         producer:
             retries: 3 # 默认Integer.MAX
             batch-size: 16384 # 默认16384，即16kb
@@ -21,7 +21,7 @@ spring:
                 request:
                     timeout:
                         ms: 20000 # 默认30000
-                deliverty:
+                delivery:
                     timeout:
                         ms: 60000 # 默认120000 (delivery = request * retry)
         consumer:
@@ -32,6 +32,20 @@ spring:
             value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
         listener:
             ack-mode: manual_immediate # 打开手动提交(2), 默认自动提交
+        batch-consumer:
+            consumer:
+                bootstrap-servers: 124.223.93.211:9091,124.223.93.211:9092
+                group-id: ${spring.application.name}
+                auto-offset-reset: earliest
+                enable-auto-commit: false
+                max-poll-records: 10 # 批量消费最大数量
+#                fetch-min-size: 10 # 一次消费最小字节
+                key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+                value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            listener:
+                type: batch # 批量消费
+                concurrency: 1 # 为消费者指定线程数量，并发消费
+                ack-mode: manual_immediate
 
 logging:
     root: info

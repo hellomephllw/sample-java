@@ -33,4 +33,10 @@ public class TestController {
         return "success";
     }
 
+    @PostMapping("/sendBatch")
+    public String sendBatch() {
+        kafkaProducer.sendBatch();
+        return "success";
+    }
+
 }
